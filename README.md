@@ -1,6 +1,14 @@
-# ReWear - Community Clothing Exchange
+👕 ReWear – Community Clothing Exchange
+📌 Problem Statement 3
+Develop ReWear, a web-based platform that enables users to exchange unused clothing through direct swaps or a point-based redemption system. The goal is to promote sustainable fashion and reduce textile waste by encouraging users to reuse wearable garments instead of discarding them.
 
-A web-based platform that enables users to exchange unused clothing through direct swaps or a point-based redemption system. Promoting sustainable fashion and reducing textile waste.
+
+👥 Team Information
+Elite: EcoSwap Devs
+Team Members:
+Aditya pareek – adpaniitian@gmail.com
+Divy jain – divyjn28@gmail.com
+Falguni kamewal – agirlcode07@gmail.com
 
 ## Features
 
@@ -45,6 +53,8 @@ rewear-clothing-exchange/
 - **File Upload**: Multer
 - **Database**: MongoDB (with Mongoose ODM)
 
-## Development Timeline
+ 
 
-This project is designed to be completed within 8 hours for the Odoo hackathon. 
+
+
+
