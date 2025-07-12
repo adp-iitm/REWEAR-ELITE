@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcryptjs');
 const User = require('./models/User');
 const Item = require('./models/Item');
 const Swap = require('./models/Swap');
@@ -9,56 +10,56 @@ const sampleUsers = [
   {
     email: 'admin@rewear.com',
     password: 'admin123',
-    name: 'Admin User',
+    name: 'Priya Sharma',
     role: 'admin',
     points: 500,
-    bio: 'Platform administrator helping to promote sustainable fashion.',
-    location: 'New York, NY',
+    bio: 'Platform administrator promoting sustainable fashion in India.',
+    location: 'Mumbai, Maharashtra',
     avatar: ''
   },
   {
-    email: 'sarah@email.com',
+    email: 'priya@email.com',
     password: 'password123',
-    name: 'Sarah Johnson',
+    name: 'Priya Patel',
     points: 250,
-    bio: 'Fashion enthusiast who loves sustainable clothing swaps!',
-    location: 'Los Angeles, CA',
+    bio: 'Fashion enthusiast who loves traditional Indian clothing swaps!',
+    location: 'Delhi, NCR',
     avatar: ''
   },
   {
-    email: 'mike@email.com',
+    email: 'rahul@email.com',
     password: 'password123',
-    name: 'Mike Chen',
+    name: 'Rahul Verma',
     points: 180,
     bio: 'Minimalist who believes in quality over quantity.',
-    location: 'San Francisco, CA',
+    location: 'Bangalore, Karnataka',
     avatar: ''
   },
   {
-    email: 'emma@email.com',
+    email: 'anjali@email.com',
     password: 'password123',
-    name: 'Emma Rodriguez',
+    name: 'Anjali Singh',
     points: 320,
     bio: 'Vintage lover and thrift store regular.',
-    location: 'Austin, TX',
+    location: 'Chennai, Tamil Nadu',
     avatar: ''
   },
   {
-    email: 'david@email.com',
+    email: 'arjun@email.com',
     password: 'password123',
-    name: 'David Kim',
+    name: 'Arjun Reddy',
     points: 95,
     bio: 'Just getting started with sustainable fashion.',
-    location: 'Seattle, WA',
+    location: 'Hyderabad, Telangana',
     avatar: ''
   },
   {
-    email: 'lisa@email.com',
+    email: 'meera@email.com',
     password: 'password123',
-    name: 'Lisa Thompson',
+    name: 'Meera Iyer',
     points: 410,
     bio: 'Professional stylist and fashion consultant.',
-    location: 'Miami, FL',
+    location: 'Kolkata, West Bengal',
     avatar: ''
   }
 ];
@@ -66,253 +67,253 @@ const sampleUsers = [
 const sampleItems = [
   // Tops
   {
-    title: 'Vintage Denim Jacket',
-    description: 'Classic 90s denim jacket in excellent condition. Perfect for layering and adds a cool vintage vibe to any outfit.',
-    category: 'tops',
-    type: 'vintage',
-    size: 'M',
-    condition: 'good',
-    tags: ['denim', 'vintage', 'jacket', '90s'],
-    pointsValue: 150,
-    brand: 'Levi\'s',
-    color: 'Blue',
-    material: 'Denim',
-    location: 'Los Angeles, CA'
-  },
-  {
-    title: 'Silk Blouse',
-    description: 'Elegant silk blouse perfect for office wear or special occasions. Soft fabric and flattering cut.',
+    title: 'Silk Kurta',
+    description: 'Beautiful silk kurta with intricate embroidery work. Perfect for festive occasions and traditional events.',
     category: 'tops',
     type: 'formal',
-    size: 'S',
+    size: 'M',
     condition: 'like-new',
-    tags: ['silk', 'blouse', 'formal', 'office'],
-    pointsValue: 200,
-    brand: 'Banana Republic',
-    color: 'White',
+    tags: ['kurta', 'silk', 'traditional', 'festive', 'embroidery'],
+    pointsValue: 250,
+    brand: 'Anita Dongre',
+    color: 'Maroon',
     material: 'Silk',
-    location: 'San Francisco, CA'
+    location: 'Mumbai, Maharashtra'
   },
   {
-    title: 'Graphic T-Shirt',
-    description: 'Comfortable cotton t-shirt with a cool graphic print. Great for casual everyday wear.',
+    title: 'Cotton Salwar Kameez',
+    description: 'Comfortable cotton salwar kameez set perfect for daily wear. Light and breathable fabric.',
     category: 'tops',
     type: 'casual',
     size: 'L',
     condition: 'good',
-    tags: ['t-shirt', 'graphic', 'casual', 'cotton'],
-    pointsValue: 80,
-    brand: 'Urban Outfitters',
-    color: 'Black',
+    tags: ['salwar', 'kameez', 'cotton', 'daily', 'comfortable'],
+    pointsValue: 180,
+    brand: 'Fabindia',
+    color: 'Blue',
     material: 'Cotton',
-    location: 'Austin, TX'
+    location: 'Delhi, NCR'
   },
   {
-    title: 'Cashmere Sweater',
-    description: 'Luxurious cashmere sweater in a beautiful emerald green. Perfect for cold weather and very soft.',
+    title: 'Designer Blouse',
+    description: 'Elegant designer blouse with mirror work and traditional motifs. Perfect for pairing with sarees.',
+    category: 'tops',
+    type: 'formal',
+    size: 'S',
+    condition: 'like-new',
+    tags: ['blouse', 'designer', 'mirror-work', 'traditional'],
+    pointsValue: 300,
+    brand: 'Sabyasachi',
+    color: 'Gold',
+    material: 'Silk',
+    location: 'Kolkata, West Bengal'
+  },
+  {
+    title: 'Kurti with Palazzo',
+    description: 'Modern kurti with palazzo pants set. Perfect blend of traditional and contemporary fashion.',
     category: 'tops',
     type: 'casual',
     size: 'M',
-    condition: 'like-new',
-    tags: ['cashmere', 'sweater', 'winter', 'luxury'],
-    pointsValue: 300,
-    brand: 'J.Crew',
+    condition: 'good',
+    tags: ['kurti', 'palazzo', 'modern', 'fusion'],
+    pointsValue: 200,
+    brand: 'Global Desi',
     color: 'Green',
-    material: 'Cashmere',
-    location: 'New York, NY'
+    material: 'Cotton',
+    location: 'Bangalore, Karnataka'
   },
   
   // Bottoms
   {
-    title: 'High-Waisted Jeans',
-    description: 'Trendy high-waisted jeans with a flattering fit. Great for creating a vintage-inspired look.',
+    title: 'Churidar Pants',
+    description: 'Traditional churidar pants with elastic waist. Perfect for pairing with kurtas and tunics.',
     category: 'bottoms',
     type: 'casual',
     size: 'M',
     condition: 'good',
-    tags: ['jeans', 'high-waisted', 'vintage', 'trendy'],
+    tags: ['churidar', 'traditional', 'elastic', 'comfortable'],
     pointsValue: 120,
-    brand: 'Madewell',
-    color: 'Blue',
-    material: 'Denim',
-    location: 'Los Angeles, CA'
+    brand: 'Biba',
+    color: 'Black',
+    material: 'Cotton',
+    location: 'Chennai, Tamil Nadu'
   },
   {
-    title: 'Pencil Skirt',
-    description: 'Professional pencil skirt perfect for the office. Classic black color goes with everything.',
+    title: 'Lehenga Skirt',
+    description: 'Beautiful lehenga skirt with heavy embroidery and mirror work. Perfect for weddings and celebrations.',
     category: 'bottoms',
     type: 'formal',
     size: 'S',
     condition: 'like-new',
-    tags: ['skirt', 'pencil', 'formal', 'office'],
-    pointsValue: 180,
-    brand: 'Ann Taylor',
-    color: 'Black',
-    material: 'Wool',
-    location: 'San Francisco, CA'
+    tags: ['lehenga', 'embroidery', 'mirror-work', 'wedding'],
+    pointsValue: 400,
+    brand: 'Manish Malhotra',
+    color: 'Pink',
+    material: 'Silk',
+    location: 'Mumbai, Maharashtra'
   },
   {
-    title: 'Cargo Pants',
-    description: 'Comfortable cargo pants with multiple pockets. Great for outdoor activities or casual wear.',
+    title: 'Dhoti Pants',
+    description: 'Modern dhoti pants with contemporary styling. Perfect for fusion wear and casual occasions.',
     category: 'bottoms',
     type: 'casual',
     size: 'L',
     condition: 'good',
-    tags: ['cargo', 'pants', 'outdoor', 'pockets'],
-    pointsValue: 100,
-    brand: 'Patagonia',
-    color: 'Olive',
+    tags: ['dhoti', 'modern', 'fusion', 'casual'],
+    pointsValue: 150,
+    brand: 'W for Woman',
+    color: 'White',
     material: 'Cotton',
-    location: 'Seattle, WA'
+    location: 'Hyderabad, Telangana'
   },
   
   // Dresses
   {
-    title: 'Summer Floral Dress',
-    description: 'Beautiful floral print dress perfect for summer. Light and airy fabric, great for warm weather.',
-    category: 'dresses',
-    type: 'casual',
-    size: 'M',
-    condition: 'good',
-    tags: ['dress', 'floral', 'summer', 'casual'],
-    pointsValue: 140,
-    brand: 'Free People',
-    color: 'Multi',
-    material: 'Cotton',
-    location: 'Miami, FL'
-  },
-  {
-    title: 'Cocktail Dress',
-    description: 'Elegant cocktail dress perfect for special occasions. Sophisticated design with a flattering silhouette.',
+    title: 'Anarkali Suit',
+    description: 'Elegant Anarkali suit with beautiful flow and traditional embroidery. Perfect for special occasions.',
     category: 'dresses',
     type: 'formal',
-    size: 'S',
+    size: 'M',
     condition: 'like-new',
-    tags: ['dress', 'cocktail', 'formal', 'elegant'],
-    pointsValue: 250,
-    brand: 'Reformation',
-    color: 'Red',
+    tags: ['anarkali', 'suit', 'elegant', 'traditional'],
+    pointsValue: 350,
+    brand: 'Ritu Kumar',
+    color: 'Purple',
     material: 'Silk',
-    location: 'New York, NY'
+    location: 'Delhi, NCR'
+  },
+  {
+    title: 'Indo-Western Dress',
+    description: 'Beautiful fusion dress combining Indian and Western elements. Perfect for modern Indian women.',
+    category: 'dresses',
+    type: 'casual',
+    size: 'S',
+    condition: 'good',
+    tags: ['fusion', 'indo-western', 'modern', 'versatile'],
+    pointsValue: 280,
+    brand: 'Masaba',
+    color: 'Orange',
+    material: 'Cotton',
+    location: 'Bangalore, Karnataka'
   },
   
   // Outerwear
   {
-    title: 'Wool Coat',
-    description: 'Warm wool coat perfect for winter. Classic design that never goes out of style.',
+    title: 'Embroidered Dupatta',
+    description: 'Heavy embroidered dupatta with traditional motifs. Perfect for completing ethnic looks.',
     category: 'outerwear',
-    type: 'casual',
-    size: 'L',
-    condition: 'good',
-    tags: ['coat', 'wool', 'winter', 'classic'],
-    pointsValue: 220,
-    brand: 'J.Crew',
-    color: 'Navy',
-    material: 'Wool',
-    location: 'Seattle, WA'
+    type: 'formal',
+    size: 'One Size',
+    condition: 'like-new',
+    tags: ['dupatta', 'embroidered', 'traditional', 'ethnic'],
+    pointsValue: 200,
+    brand: 'Raw Mango',
+    color: 'Red',
+    material: 'Silk',
+    location: 'Kolkata, West Bengal'
   },
   {
-    title: 'Leather Jacket',
-    description: 'Classic leather jacket with a rock and roll vibe. Timeless piece that adds edge to any outfit.',
+    title: 'Pashmina Shawl',
+    description: 'Luxurious pashmina shawl with fine embroidery. Perfect for winters and special occasions.',
     category: 'outerwear',
-    type: 'casual',
-    size: 'M',
+    type: 'formal',
+    size: 'One Size',
     condition: 'good',
-    tags: ['leather', 'jacket', 'classic', 'edgy'],
-    pointsValue: 280,
-    brand: 'AllSaints',
-    color: 'Black',
-    material: 'Leather',
-    location: 'Los Angeles, CA'
+    tags: ['pashmina', 'shawl', 'luxury', 'winter'],
+    pointsValue: 500,
+    brand: 'Kashmir Loom',
+    color: 'Cream',
+    material: 'Pashmina',
+    location: 'Srinagar, Kashmir'
   },
   
   // Shoes
   {
-    title: 'Ankle Boots',
-    description: 'Stylish ankle boots perfect for fall and winter. Comfortable heel height and versatile design.',
+    title: 'Jutti Footwear',
+    description: 'Traditional jutti footwear with beautiful embroidery. Perfect for ethnic wear and special occasions.',
     category: 'shoes',
-    type: 'casual',
+    type: 'formal',
     size: 'M',
     condition: 'like-new',
-    tags: ['boots', 'ankle', 'fall', 'versatile'],
-    pointsValue: 160,
-    brand: 'Steve Madden',
-    color: 'Brown',
+    tags: ['jutti', 'traditional', 'embroidery', 'ethnic'],
+    pointsValue: 180,
+    brand: 'Khadi',
+    color: 'Gold',
     material: 'Leather',
-    location: 'Austin, TX'
+    location: 'Jaipur, Rajasthan'
   },
   {
-    title: 'Running Shoes',
-    description: 'Comfortable running shoes in great condition. Perfect for workouts or casual wear.',
+    title: 'Kolhapuri Chappals',
+    description: 'Authentic Kolhapuri chappals with traditional craftsmanship. Comfortable and stylish.',
     category: 'shoes',
-    type: 'sportswear',
+    type: 'casual',
     size: 'L',
     condition: 'good',
-    tags: ['running', 'shoes', 'athletic', 'comfortable'],
+    tags: ['kolhapuri', 'chappals', 'traditional', 'comfortable'],
     pointsValue: 120,
-    brand: 'Nike',
-    color: 'White',
-    material: 'Mesh',
-    location: 'San Francisco, CA'
+    brand: 'Kolhapuri',
+    color: 'Brown',
+    material: 'Leather',
+    location: 'Kolhapur, Maharashtra'
   },
   
   // Accessories
   {
-    title: 'Leather Handbag',
-    description: 'Classic leather handbag with plenty of storage space. Perfect for everyday use.',
+    title: 'Potli Bag',
+    description: 'Traditional potli bag with beautiful embroidery and mirror work. Perfect for ethnic occasions.',
     category: 'accessories',
-    type: 'casual',
+    type: 'formal',
     size: 'One Size',
     condition: 'good',
-    tags: ['handbag', 'leather', 'classic', 'everyday'],
-    pointsValue: 180,
-    brand: 'Coach',
-    color: 'Brown',
-    material: 'Leather',
-    location: 'New York, NY'
+    tags: ['potli', 'bag', 'traditional', 'embroidery'],
+    pointsValue: 150,
+    brand: 'Handcrafted',
+    color: 'Red',
+    material: 'Silk',
+    location: 'Varanasi, Uttar Pradesh'
   },
   {
-    title: 'Silk Scarf',
-    description: 'Beautiful silk scarf with an elegant pattern. Perfect for adding a pop of color to any outfit.',
+    title: 'Kundan Necklace Set',
+    description: 'Beautiful kundan necklace set with matching earrings. Perfect for traditional and festive occasions.',
     category: 'accessories',
     type: 'formal',
     size: 'One Size',
     condition: 'like-new',
-    tags: ['scarf', 'silk', 'elegant', 'accessory'],
-    pointsValue: 90,
-    brand: 'Hermès',
-    color: 'Multi',
-    material: 'Silk',
-    location: 'Miami, FL'
+    tags: ['kundan', 'necklace', 'jewelry', 'traditional'],
+    pointsValue: 300,
+    brand: 'Tanishq',
+    color: 'Gold',
+    material: 'Kundan',
+    location: 'Mumbai, Maharashtra'
   }
 ];
 
 const sampleSwaps = [
   {
     swapType: 'direct',
-    message: 'I love your vintage denim jacket! Would you be interested in swapping for my leather jacket?',
+    message: 'I love your silk kurta! Would you be interested in swapping for my designer blouse?',
     status: 'pending',
-    location: 'Los Angeles, CA'
+    location: 'Mumbai, Maharashtra'
   },
   {
     swapType: 'points',
-    pointsOffered: 200,
-    message: 'I\'d love to redeem this silk blouse with my points!',
+    pointsOffered: 250,
+    message: 'I\'d love to redeem this Anarkali suit with my points!',
     status: 'accepted',
-    location: 'San Francisco, CA'
+    location: 'Delhi, NCR'
   },
   {
     swapType: 'direct',
-    message: 'Your wool coat would be perfect for my winter wardrobe. I can offer my cashmere sweater in exchange.',
+    message: 'Your lehenga skirt would be perfect for my sister\'s wedding. I can offer my silk kurta in exchange.',
     status: 'pending',
-    location: 'Seattle, WA'
+    location: 'Bangalore, Karnataka'
   },
   {
     swapType: 'points',
-    pointsOffered: 150,
-    message: 'Interested in your leather handbag! Would like to use points to get it.',
+    pointsOffered: 300,
+    message: 'Interested in your kundan necklace set! Would like to use points to get it.',
     status: 'completed',
-    location: 'New York, NY'
+    location: 'Kolkata, West Bengal'
   }
 ];
 
@@ -342,8 +343,21 @@ async function clearData() {
 // Seed users
 async function seedUsers() {
   try {
-    const createdUsers = await User.insertMany(sampleUsers);
-    console.log(`Created ${createdUsers.length} users`);
+    // Create users with explicitly hashed passwords
+    const createdUsers = [];
+    for (const userData of sampleUsers) {
+      // Hash password explicitly
+      const salt = await bcrypt.genSalt(10);
+      const hashedPassword = await bcrypt.hash(userData.password, salt);
+      
+      const user = new User({
+        ...userData,
+        password: hashedPassword
+      });
+      await user.save();
+      createdUsers.push(user);
+    }
+    console.log(`Created ${createdUsers.length} users with hashed passwords`);
     return createdUsers;
   } catch (error) {
     console.error('Error seeding users:', error);
@@ -354,21 +368,45 @@ async function seedUsers() {
 // Seed items
 async function seedItems(users) {
   try {
+    const imageMap = {
+      'Silk Kurta': 'https://plus.unsplash.com/premium_photo-1691030255948-0276ee6f711e?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8a3VydGF8ZW58MHx8MHx8fDA%3D',
+      'Cotton Salwar Kameez': 'https://media.istockphoto.com/id/1479661623/photo/young-teenager-girl-smiling-and-greeting.webp?a=1&b=1&s=612x612&w=0&k=20&c=xSuNsl_uE-WcqhUvPpy_cBBU6Kr6mZH2uG1L-qDXl4o=',
+      'Designer Blouse': 'https://images.unsplash.com/photo-1564257631407-4deb1f99d992?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8QmxvdXNlfGVufDB8fDB8fHww',
+      'Kurti with Palazzo': 'https://images.unsplash.com/photo-1741847639057-b51a25d42892?w=1000&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8a3VydGl8ZW58MHx8MHx8fDA%3D',
+
+      'Churidar Pants': 'https://media.istockphoto.com/id/2214437843/photo/folded-embroidered-beautiful-black-cotton-salwar-kameez-three-piece-set-for-women-on-a-light.webp?a=1&b=1&s=612x612&w=0&k=20&c=RNvmUnkCXm8ahYSZ8471LqMI15OBdZKOm91czyI14oY=',
+      'Lehenga Skirt': 'https://images.unsplash.com/photo-1602810317957-34056c4dc3c3?w=500&auto=format&fit=crop&q=80',
+      'Dhoti Pants': 'https://images.unsplash.com/photo-1520962914816-7a3f3e2c6c73?w=500&auto=format&fit=crop&q=80',
+
+      'Anarkali Suit': 'https://images.unsplash.com/photo-1618918319542-c34704836a3e?w=500&auto=format&fit=crop&q=80',
+      'Indo-Western Dress': 'https://media.istockphoto.com/id/2168583556/photo/bride-in-her-modern-traditional-attire-displaying-her-mehandi.webp?a=1&b=1&s=612x612&w=0&k=20&c=_3tgSpRjpKocO4G1vZITUjBAGR-AZfeEfT0d1NB2_Ok=',
+
+      'Embroidered Dupatta': 'https://images.unsplash.com/photo-1586796971565-d2f5f99d7575?w=500&auto=format&fit=crop&q=80',
+      'Pashmina Shawl': 'https://images.unsplash.com/photo-1583743814964-2a4d7f7f1f2f?w=500&auto=format&fit=crop&q=80',
+
+      'Jutti Footwear': 'https://images.unsplash.com/photo-1600181953608-598e3a018fb3?w=500&auto=format&fit=crop&q=80',
+      'Kolhapuri Chappals': 'https://images.unsplash.com/photo-1600180758890-1cc916f27f99?w=500&auto=format&fit=crop&q=80',
+
+      'Potli Bag': 'https://images.unsplash.com/photo-1600181982892-3b340b77b52a?w=500&auto=format&fit=crop&q=80',
+      'Kundan Necklace Set': 'https://images.unsplash.com/photo-1602810317794-96b0fefbaf6f?w=500&auto=format&fit=crop&q=80'
+    };
+
     const itemsWithOwners = sampleItems.map((item, index) => ({
       ...item,
       owner: users[index % users.length]._id,
       status: 'approved',
-      images: ['https://via.placeholder.com/400x500/cccccc/666666?text=' + encodeURIComponent(item.title)]
+      images: [imageMap[item.title] + '?auto=format&fit=crop&w=500&q=80']
     }));
-    
+
     const createdItems = await Item.insertMany(itemsWithOwners);
-    console.log(`Created ${createdItems.length} items`);
+    console.log(`Created ${createdItems.length} items with realistic image URLs`);
     return createdItems;
   } catch (error) {
     console.error('Error seeding items:', error);
     return [];
   }
 }
+
 
 // Seed swaps
 async function seedSwaps(users, items) {
@@ -410,8 +448,13 @@ async function seedDatabase() {
     console.log(`   Email: admin@rewear.com`);
     console.log(`   Password: admin123`);
     console.log('\n👥 Regular user credentials:');
-    console.log(`   Email: sarah@email.com (and others)`);
+    console.log(`   Email: priya@email.com (and others)`);
     console.log(`   Password: password123`);
+    console.log('\n🇮🇳 Indian Fashion Items Added:');
+    console.log(`   - Traditional: Kurtas, Salwar Kameez, Lehengas`);
+    console.log(`   - Fusion: Indo-Western Dresses, Kurti with Palazzo`);
+    console.log(`   - Accessories: Juttis, Potli Bags, Kundan Jewelry`);
+    console.log(`   - Locations: Mumbai, Delhi, Bangalore, Chennai, Kolkata, Hyderabad`);
     
     process.exit(0);
   } catch (error) {
